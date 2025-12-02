@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import Product from '../models/product';
 import { productMapper, productsMapper } from '../dto/product';
 import { ConflictError, NotFoundError } from '../utils/errors';
+import HttpStatus from '../utils/httpStatus';
 
 export const getProducts = (_: Request, res: Response, next: NextFunction) => Product.find({})
   .then((el) => res.status(200).send(
@@ -14,7 +15,7 @@ export const getProduct = (req: Request, res: Response, next: NextFunction) => {
   return Product.findById(id)
     .then((el) => {
       if (!el) throw new NotFoundError('Product not found');
-      return res.status(200).send(
+      return res.status(HttpStatus.Ok).send(
         productMapper(el),
       );
     })
@@ -25,7 +26,7 @@ export const createProduct = (req: Request, res: Response, next: NextFunction) =
   const { body } = req;
   return Product.create(body)
     .then((el) => {
-      res.status(201).send(
+      res.status(HttpStatus.Created).send(
         productMapper(el),
       );
     }).catch((e) => {
